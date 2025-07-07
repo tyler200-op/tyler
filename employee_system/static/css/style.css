@@ -1,0 +1,44 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.list-group-item-info {
+    background-color: #d1ecf1;
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.75em;
+}
+
+.display-4 {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+.card-body h1.display-4 {
+    margin-bottom: 0.5rem;
+}
+
+.card-body a.text-white {
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.card-body a.text-white:hover {
+    opacity: 1;
+}

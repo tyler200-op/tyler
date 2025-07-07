@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title">Active Employees</h5>
+                <h1 class="display-4">{{ active_employees }}</h1>
+                <a href="/employees" class="text-white">View all employees</a>
+            </div>
+        </div>
+    </div>
+    
+    {% if current_role in ['admin', 'manager'] %}
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body">
+                <h5 class="card-title">Pending Leave Requests</h5>
+                <h1 class="display-4">{{ pending_requests }}</h1>
+                <a href="{{ url_for('leave_requests') }}" class="text-white">Review requests</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body">
+                <h5 class="card-title">Unread Notifications</h5>
+                <h1 class="display-4">{{ unread_notifications }}</h1>
+                <a href="{{ url_for('view_notifications') }}" class="text-white">View notifications</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if current_role == 'admin' %}
+                    <a href="{{ url_for('add_employee') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add New Employee
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('send_notification') }}" class="btn btn-success">
+                        <i class="fas fa-bell"></i> Send Notification
+                    </a>
+                    
+                    {% if current_role == 'employee' %}
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#requestLeaveModal">
+                        <i class="fas fa-calendar-alt"></i> Request Leave
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Notifications</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_notifications %}
+                    <div class="list-group">
+                        {% for notification in recent_notifications %}
+                        <a href="{{ url_for('notifications') }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ notification['title'] }}</h6>
+                                <small>{{ notification['created_at'].strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ notification['message'][:50] }}{% if notification['message']|length > 50 %}...{% endif %}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No recent notifications</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Leave Modal -->
+{% if current_role == 'employee' %}
+<div class="modal fade" id="requestLeaveModal" tabindex="-1" aria-labelledby="requestLeaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="requestLeaveModalLabel">Request Leave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('view_leave_requests') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
