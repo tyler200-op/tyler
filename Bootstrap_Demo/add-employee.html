@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Employee</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to right, #e0f7fa, #eceff1);
+    }
+
+    h1, h2 {
+      color: #004d40;
+      text-align: center;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
+      margin: 20px auto;
+    }
+
+    .form-container label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #00695c;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form-container input[type="submit"] {
+      background-color: #00897b;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-container input[type="submit"]:hover {
+      background-color: #00695c;
+    }
+
+    .employee-list {
+      margin-top: 40px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .employee-list table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .employee-list th, .employee-list td {
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    .employee-list th {
+      background-color: #00796b;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Add Employee</h1>
+
+  <div class="form-container">
+    <form id="employeeForm">
+      <label for="emp_id">Employee ID:</label>
+      <input type="text" id="emp_id" name="emp_id" required />
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" required />
+
+      <label for="position">Position:</label>
+      <input type="text" id="position" name="position" required />
+
+      <label for="office">Office:</label>
+      <input type="text" id="office" name="office" required />
+
+      <input type="submit" value="Save Employee" />
+    </form>
+  </div>
+
+  <div class="employee-list">
+    <h2>Employee List</h2>
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Last Name</th>
+          <th>Position</th>
+          <th>Office</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Employee records will be displayed here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", loadEmployees);
+
+    document.getElementById("employeeForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const emp_id = document.getElementById("emp_id").value.trim();
+      const last_name = document.getElementById("last_name").value.trim();
+      const position = document.getElementById("position").value.trim();
+      const office = document.getElementById("office").value.trim();
+
+      const employee = { emp_id, last_name, position, office };
+      saveEmployee(employee);
+      document.getElementById("employeeForm").reset();
+    });
+
+    function saveEmployee(employee) {
+      let employees = JSON.parse(localStorage.getItem("employees")) || [];
+      employees.push(employee);
+      localStorage.setItem("employees", JSON.stringify(employees));
+      loadEmployees();
+    }
+
+    function loadEmployees() {
+      const employees = JSON.parse(localStorage.getItem("employees")) || [];
+      const employeeTableBody = document.getElementById("employeeTable").getElementsByTagName("tbody")[0];
+      employeeTableBody.innerHTML = "";
+
+      employees.forEach((employee, index) => {
+        const row = employeeTableBody.insertRow();
+        row.innerHTML = `
+          <td>${employee.emp_id}</td>
+          <td>${employee.last_name}</td>
+          <td>${employee.position}</td>
+          <td>${employee.office}</td>
+          <td><button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button></td>
+        `;
+      });
+    }
+
+    function deleteEmployee(index) {
+      let employees = JSON.parse(localStorage.getItem("employees")) || [];
+      employees.splice(index, 1);
+      localStorage.setItem("employees", JSON.stringify(employees));
+      loadEmployees();
+    }
+  </script>
+</body>
+</html>
