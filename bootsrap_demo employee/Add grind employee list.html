@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Grid List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #f0f4f8);
+      margin: 0;
+      padding: 40px 20px;
+      color: #0d47a1;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .form-group input {
+      flex: 1 1 20%;
+      min-width: 150px;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #bbdefb;
+      border-radius: 5px;
+      background-color: #f0f8ff;
+    }
+
+    .form-group button {
+      background-color: #1565c0;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .form-group button:hover {
+      background-color: #0d47a1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #cfd8dc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .delete-btn {
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #b71c1c;
+    }
+
+    .limit-message {
+      color: red;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Employee Grid List</h1>
+
+  <div class="container">
+    <div class="form-group">
+      <input type="text" id="empId" placeholder="Employee ID">
+      <input type="text" id="lastName" placeholder="Last Name">
+      <input type="text" id="position" placeholder="Position">
+      <input type="text" id="office" placeholder="Office">
+      <button onclick="addEmployee()">Add</button>
+    </div>
+    <div id="limitMessage" class="limit-message"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Last Name</th>
+          <th>Position</th>
+          <th>Office</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable">
+        <!-- Auto-filled rows appear here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const sampleEmployees = [
+      { empId: "E001", lastName: "Santos", position: "Manager", office: "Manila" },
+      { empId: "E002", lastName: "Reyes", position: "Developer", office: "Cebu" },
+      { empId: "E003", lastName: "Cruz", position: "HR", office: "Davao" },
+      { empId: "E004", lastName: "Garcia", position: "Accountant", office: "Quezon City" },
+      { empId: "E005", lastName: "Lopez", position: "Designer", office: "Pasig" },
+      { empId: "E006", lastName: "Torres", position: "Support", office: "Baguio" },
+      { empId: "E007", lastName: "Delos Reyes", position: "Engineer", office: "Taguig" },
+      { empId: "E008", lastName: "Mendoza", position: "Admin", office: "Laguna" },
+      { empId: "E009", lastName: "Flores", position: "IT", office: "Batangas" },
+      { empId: "E010", lastName: "Navarro", position: "Supervisor", office: "Cavite" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const table = document.getElementById("employeeTable");
+      sampleEmployees.forEach(emp => {
+        const row = createRow(emp.empId, emp.lastName, emp.position, emp.office);
+        table.appendChild(row);
+      });
+    });
+
+    function addEmployee() {
+      const table = document.getElementById("employeeTable");
+      const limitMsg = document.getElementById("limitMessage");
+
+      if (table.rows.length >= 10) {
+        limitMsg.textContent = "Maximum of 10 employees allowed.";
+        return;
+      } else {
+        limitMsg.textContent = "";
+      }
+
+      const empId = document.getElementById("empId").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const position = document.getElementById("position").value.trim();
+      const office = document.getElementById("office").value.trim();
+
+      if (!empId || !lastName || !position || !office) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      const row = createRow(empId, lastName, position, office);
+      table.appendChild(row);
+
+      // Clear inputs
+      document.getElementById("empId").value = "";
+      document.getElementById("lastName").value = "";
+      document.getElementById("position").value = "";
+      document.getElementById("office").value = "";
+    }
+
+    function createRow(empId, lastName, position, office) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${empId}</td>
+        <td>${lastName}</td>
+        <td>${position}</td>
+        <td>${office}</td>
+        <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+      `;
+      return row;
+    }
+
+    function deleteRow(btn) {
+      const row = btn.parentElement.parentElement;
+      row.remove();
+      document.getElementById("limitMessage").textContent = "";
+    }
+  </script>
+
+</body>
+</html>

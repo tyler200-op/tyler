@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vertical Glass Team List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #dbeeff, #f8e1f4);
+      margin: 0;
+      padding: 50px 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #5e2b86;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-group input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .form-group button {
+      background-color: #7b1fa2;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .form-group button:hover {
+      background-color: #4a0072;
+    }
+
+    .employee-box {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(6px);
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .employee-box p {
+      margin: 6px 0;
+    }
+
+    .delete-btn {
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .delete-btn:hover {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+
+  <h1> Team Directory</h1>
+
+  <div class="container">
+    <div class="form-group">
+      <input type="text" id="empId" placeholder="Employee ID" />
+      <input type="text" id="lastName" placeholder="Last Name" />
+      <input type="text" id="position" placeholder="Position" />
+      <input type="text" id="office" placeholder="Office" />
+      <button onclick="addEmployee()">Add Member</button>
+    </div>
+
+    <div id="employeeList">
+      <!-- Employee boxes will appear here -->
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", loadEmployees);
+
+    function addEmployee() {
+      const empId = document.getElementById("empId").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const position = document.getElementById("position").value.trim();
+      const office = document.getElementById("office").value.trim();
+
+      if (!empId || !lastName || !position || !office) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const employee = { empId, lastName, position, office };
+      const employees = JSON.parse(localStorage.getItem("teamListGlass")) || [];
+      employees.push(employee);
+      localStorage.setItem("teamListGlass", JSON.stringify(employees));
+
+      clearForm();
+      loadEmployees();
+    }
+
+    function loadEmployees() {
+      const employees = JSON.parse(localStorage.getItem("teamListGlass")) || [];
+      const container = document.getElementById("employeeList");
+      container.innerHTML = "";
+
+      employees.forEach((emp, index) => {
+        const div = document.createElement("div");
+        div.className = "employee-box";
+        div.innerHTML = `
+          <p><strong>ID:</strong> ${emp.empId}</p>
+          <p><strong>Last Name:</strong> ${emp.lastName}</p>
+          <p><strong>Position:</strong> ${emp.position}</p>
+          <p><strong>Office:</strong> ${emp.office}</p>
+          <button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteEmployee(index) {
+      const employees = JSON.parse(localStorage.getItem("teamListGlass")) || [];
+      employees.splice(index, 1);
+      localStorage.setItem("teamListGlass", JSON.stringify(employees));
+      loadEmployees();
+    }
+
+    function clearForm() {
+      document.getElementById("empId").value = "";
+      document.getElementById("lastName").value = "";
+      document.getElementById("position").value = "";
+      document.getElementById("office").value = "";
+    }
+  </script>
+
+</body>
+</html>
